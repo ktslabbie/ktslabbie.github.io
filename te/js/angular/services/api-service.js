@@ -1,5 +1,5 @@
 var twitterAPIService = angular.module('twitterWeb.APIService', ['ngResource']);
-var apiHostName = "http://ec2-54-65-213-114.ap-northeast-1.compute.amazonaws.com:8090/api/"
+var apiHostName = "http://ec2-54-92-54-124.ap-northeast-1.compute.amazonaws.com:8090/api/"
 
 twitterAPIService.factory('SimpleUser', ['$resource', function($resource) {
 	return $resource(apiHostName + 'get-simple-user', { }, {
