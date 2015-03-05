@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <!-- Configure a proxy to the back-end services -->
+    <servlet>
+        <servlet-name>proxy</servlet-name>
+        <servlet-class>org.eclipse.jetty.proxy.ProxyServlet$Transparent</servlet-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>proxyTo</param-name>
+            <param-value>http://localhost:8090/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>Prefix</param-name>
+            <param-value>/api</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>proxy</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+    <!-- <servlet>
+	    <servlet-name>TimerServlet</servlet-name>
+	    <servlet-class>jp.titech.twitter_web.TimerWebSocketServlet</servlet-class>
+	    <load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>TimerServlet</servlet-name>
+	    <url-pattern>/api/timer/*</url-pattern>
+	</servlet-mapping> -->
+
+</web-app>

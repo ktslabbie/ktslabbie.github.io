@@ -1,0 +1,81 @@
+<div class="animate-if">
+	<!-- Profile image -->
+	<div class="col-md-2 profile-img-panel">
+		<div class="row row-profile-img">
+			<div class="col-md-12 col-profile-img text-center">
+				<img class="img-responsive img-profile animate-if img-center" ng-src="{{ targetUser.properties.profileImageURL }}"/>
+			</div>
+		</div>
+		<div class="row text-center animate-if" ng-if="targetUser.tweetCount > 0 && targetUser.properties.statusesCount >= minTweets && targetUser.englishRate > minimumEnglishRate">
+			<a class="text-tweet-number" href="" data-toggle="modal" data-target="#tweetModal{{targetUser.screenName}}" ng-click="openModal = $index">
+				Got <span ng-bind="targetUser.tweetCount"></span> Tweets
+			</a>
+		</div>
+		<div class="row english-rate">
+			<div class="col-md-12 text-center">
+				<span class="text-muted">English rate: 
+				<strong ng-if="targetUser.englishRate >= minimumEnglishRate" class="animate-show-hide"><em class="text-success text-english-rate"><span ng-bind="targetUser.englishRate*100 | number:0"></span>%</em></strong>
+				<strong ng-if="targetUser.englishRate >= 0 && targetUser.englishRate < minimumEnglishRate" class="animate-show-hide"><em class="text-danger text-english-rate-low"><span ng-bind="targetUser.englishRate*100 | number:0"></span>%</em></strong>
+				<strong ng-if="targetUser.englishRate == -1"><em>-</em></strong></span>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Profile info -->
+	<div class="col-md-4 profile-panel">
+		<div class="name-desc">
+			<div ng-show="targetUser.screenName">
+				<strong>@<span ng-bind="targetUser.screenName"></span></strong> <span style="font-size: 13px;" ng-show="targetUser.properties.name">(<span ng-bind="targetUser.properties.name"></span>)</span>
+			</div>
+			<div class="user-description">
+				<small><span ng-bind="targetUser.properties.description"></span></small>
+			</div>
+		</div>
+		<!-- <small><span class="text-muted">Location: </span><em><span ng-bind="targetUser.properties.location">-</span></em></small>
+		<br> -->
+		<div class="row user-stats">
+			<div class="col-md-4 text-center">
+				<span class="text-muted">Tweets</span>
+				<br><span ng-bind="targetUser.properties.statusesCount"></span>
+			</div>
+			<div class="col-md-4 text-center">
+				<span class="text-muted">Followers</span>
+				<br><span ng-bind="targetUser.properties.followersCount"></span>
+			</div>
+			<div class="col-md-4 text-center">
+				<span class="text-muted">Following</span>
+				<br><span ng-bind="targetUser.properties.friendsCount"></span>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-md-6 text-center" style="margin-top: 48px;" ng-if="targetUser.error">
+		<h3 class="text-muted" style="font-size: 16px;" ng-bind="targetUser.error"></h3>
+	</div>
+	
+	<div class="col-md-6" ng-if="!targetUser.error">
+		
+		<!-- Traits -->
+		<div class="row types-panel text-center" style="font-size: 16px; margin-top: 12px;" ng-if="targetUser.loading">
+			<h3 class="text-muted">Getting tweets/interests...</h3>
+			<br>
+			<i class="fa fa-spinner fa-spin col-spinner"></i>
+		</div>
+		
+		<div class="row types-panel" ng-show="targetUser.userOntology.topTypes && targetUser.userOntology.topTypes.length > 0">
+			<div class="col-md-12">
+				<div class="row text-trait-number text-center">
+						Top unique traits
+				</div>
+				<div class="row text-muted">
+					<div class="col-md-9">Trait</div>
+					<div class="col-md-3">Score</div>
+				</div>
+				<div class="row list-types" ng-repeat="entry in targetUser.userOntology.topTypes">
+					<div class="col-md-9"><small><span ng-bind="entry[0]"></span></small></div>
+					<div class="col-md-3 col-confidence"><small><span ng-bind="entry[1] | number:2"></small></span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Twinterest Explorer</title>
+	<meta name="description" content="Divide Twitter users into interest-based clusters in real-time.">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
+
+<body ng-app="twitterWeb.app">
+	<div class="container-fluid title-bar">
+		<h1 class="title text-center">
+			<a href="/" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
+			<a href="" data-toggle="modal" data-target="#settingsModal" ng-click="openModal = true"><i class="fa fa-gear pull-right title-settings"></i></a>
+		</h1>
+	</div>
+
+    <div class="container" ng-controller="TwitterController">
+   		<div class="row">
+   			<div class="col-md-1">
+   				<h4>Sample size:</h4>
+   				<div class="input-group input-group-lg">
+			    	<input type="text" ng-model="userCount" class="form-control">
+			    </div>
+			</div>
+   			<div class="col-md-3">
+    			<h4>Explore by seed user:</h4>
+	    		<form ng-submit="getSeedUser(screenName)">
+				    <div class="input-group input-group-lg">
+				    	<span class="input-group-addon">@</span>
+						<input ng-model="screenName" type="text" class="form-control">
+						<span class="input-group-btn"><button class="btn btn-default" ng-click="getSeedUser(screenName)" type="button">Go!</button></span>
+				    </div>
+			    </form>
+		    </div>
+		    
+		    <div class="col-md-3">
+    			<h4>Explore by keyword:</h4>
+	    		<form class="form-target-user" ng-submit="getKeywordUsers(keyword)">
+				    <div class="input-group input-group-lg">
+						<input ng-model="keyword" type="text" class="form-control">
+						<span class="input-group-btn"><button class="btn btn-default" ng-click="getKeywordUsers(keyword)" type="button">Go!</button></span>
+				    </div>
+			    </form>
+		    </div>
+		    
+		    <div class="col-md-2 col-list-upload">
+				<input type="file" id="gtfile" ng-model="gtFile" gt-input>
+				<button id="gtupload" class="btn btn-default btn-list-upload" type="button" gt-button>Upload a user list</button>
+			</div>
+			
+			<div class="col-md-1">
+	    		<h4 class="header-bias">Generality bias:</h4>
+	    		<input type="range" id="genbias" min=-1 max=1 step=0.1 ng-model="generalityBias" ng-mouseup="updateBias()">
+	    	</div>
+	    	
+	    	<div class="col-md-1 col-bias-value">
+	    		<output class="output-bias" for="genbias" id=volume ng-bind="generalityBias"></output>
+	    	</div>
+			
+		    <div class="col-md-1 col-spinner text-right" ng-if="isLoading()"><i class="fa fa-spinner fa-spin"></i></div>
+		</div>
+
+		<div class="row" ng-cloak>
+			<div class="col-md-6 col-no-pad-top animate-show-hide" ng-show="visibleUsers.length > 0">
+	    		<h3>Got <span ng-bind="visibleUsers.length"></span> valid users (with enough English tweets)</h3>
+	    	</div>
+	    	<div class="col-md-3 col-no-pad-top animate-show-hide text-right" ng-show="visibleUsers.length > 1 && isLoading()">
+	    		<h3>Calculating topic clusters...</h3>
+	    	</div>
+	    	<div class="col-md-3 col-no-pad-top animate-show-hide text-right" ng-show="visibleUsers.length > 1 && !isLoading()">
+	    		<h3>Topic clusters</h3>
+	    	</div>
+	    	<div class="col-md-3 animate-show-hide col-graph-header text-right" ng-show="visibleUsers.length > 1 && status.clusteringFinished && !status.zoomed">
+	    		Double-click a cluster to zoom in
+	    	</div>
+	    	<div class="col-md-3 animate-show-hide col-graph-header text-right" ng-show="visibleUsers.length > 1 && status.clusteringFinished && status.zoomed">
+	    		<a href="" ng-click="restoreGraph()">Restore original graph</a>
+	    	</div>
+
+		    <h1 class="col-md-12 text-center text-muted" style="margin-top: 64px;" ng-if="status.noUserFound">No user found with that screen name.</h1>
+		</div>
+		
+		<div class="row" ng-cloak>
+			<div class="col-md-12 col-loading" ng-if="status.loadingInitialData">
+				<div class="row"><h1 class="col-md-12 text-center text-muted">Loading users...</h1></div>
+				<div class="row spinner-large text-center"> <i class="fa fa-spinner fa-spin"></i></div>
+			</div>
+			<div class="col-md-5 user-area">
+				<div infinite-scroll="loadMore()" infinite-scroll-disabled="pageSize >= 300" infinite-scroll-distance='0'>
+		   			<div class="row panel-target-user" ng-include="'templates/user-panel.html'" ng-repeat="targetUser in visibleUsers | limitTo:pageSize"></div>
+		   		</div>
+		   		<div class="animate-show-hide" ng-show="users[0].valid && users.length <= 1">
+			    	<!-- <div class="col-md-2">
+						<input type="file" id="files">
+						<button id="upload" class="btn btn-default" type="button">Upload DCG file</button>
+				    </div> -->
+			    	
+			    	<div class="col-md-12 text-center">
+				    	<a class="btn btn-lg btn-success btn-get-network" ng-click="getUserListFromSeed(users[0])" href="#">
+								<i class="fa fa-2x"></i>Collect followers</a>
+		    		</div>
+		    	</div>
+		   	</div>
+			
+			<div class="col-md-7 graph-area">
+				<div class="row text-center animate-show-hide" ng-show="visibleUsers.length > 0">
+					<div id="graph" class="graph col-md-12"></div>
+					<div class="col-md-12 text-left" ng-repeat="entry in legend track by $index">
+						<div class="col-md-12" style="font-size: 16px; display: inline;">
+							<div style="display: inline; background-color: {{ colors[entry.group] }}; width: 48px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>&nbsp;&nbsp;&nbsp;<div style="display: inline;" ng-bind="entry.text"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+   		<div ng-include="'templates/settings.html'"></div>
+    </div>
+    
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="js/vendor/lodash.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular-resource.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular-animate.min.js"></script>
+	<!-- <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
+	
+	<script src="js/vendor/d3.v3.min.js" charset="utf-8"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+       
+	<script src="js/vendor/ng-infinite-scroll.min.js"></script>
+	<script src="js/plugins.js"></script>
+	<script src="js/main.js"></script>
+	<script src="js/angular/services/graph-service.js"></script>
+	<script src="js/angular/apps.js"></script>
+	<script src="js/angular/controllers.js"></script>
+	<script src="js/angular/directives.js"></script>
+	<script src="js/angular/services/worker-services.js"></script>
+	<script src="js/angular/services/evaluation-services.js"></script>
+	<script src="js/angular/services/api-service.js"></script>
+</body>
+</html>

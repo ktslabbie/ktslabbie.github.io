@@ -1,0 +1,49 @@
+<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-settings">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">Settings</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-7">
+						<h3>Twitter mining</h3>
+					</div>
+					<div class="col-md-5">
+						<h3>Clustering</h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+			    		Number of users to collect: <input type="text" ng-model="userCount" class="form-control">
+			    	</div>
+			    	<div class="col-md-3">
+			    		Number of tweets per user: <input type="text" ng-model="tweetsPerUser" class="form-control">
+			    	</div>
+			    	<div class="col-md-offset-1 col-md-3">
+			    		Similarity threshold: <input type="text" ng-model="minimumSimilarity" class="form-control">
+			    	</div>
+			    </div>
+			    <div class="row">
+					<div class="col-md-12">
+						<h3>User collection restrictions</h3>
+					</div>
+				</div>
+			    <div class="row">
+			    	<div class="col-md-2">Min. followers: <input type="text" ng-model="minFollowers" class="form-control"></div>
+			    	<div class="col-md-2">Max. followers: <input type="text" ng-model="maxFollowers" class="form-control"></div>
+			    	<div class="col-md-2">Min. following: <input type="text" ng-model="minFollowing" class="form-control"></div>
+			    	<div class="col-md-2">Max. following: <input type="text" ng-model="maxFollowing" class="form-control"></div>
+			    	<div class="col-md-2">Min. tweets: <input type="text" ng-model="minTweets" class="form-control"></div>
+			    	<div class="col-md-2">Max. tweets: <input type="text" ng-model="maxTweets" class="form-control"></div>
+			    </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Save & close</button>
+			</div>
+		</div>
+	</div>
+</div>
