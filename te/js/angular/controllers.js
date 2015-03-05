@@ -17,7 +17,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.keyword = "machine learning";
 	$scope.pageSize = 0;
 	$scope.refreshCnt = 0;
-	$scope.tweetsPerUser = 200;
+	$scope.tweetsPerUser = 100;
 	$scope.userCount = 200;
 	$scope.minimumEnglishRate = 0.7;
 	
@@ -41,7 +41,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	
 	$scope.processIndex = 0;
 	$scope.completedCFIUFCount = 0;
-	$scope.maxProcesses = 6;
+	$scope.maxProcesses = 2;
 	$scope.activeProcesses = 1;
 	
 	var graph = new Graph(1080, 540, "#graph");
