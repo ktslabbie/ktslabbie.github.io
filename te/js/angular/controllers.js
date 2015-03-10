@@ -22,13 +22,16 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.minimumEnglishRate = 0.7;
 	
 	// Named Entity Recognition settings.
-	$scope.nerConfidence = 0;
+	$scope.nerConfidence = 0.01;
 	$scope.nerSupport = 0;
-	$scope.generalityBias = 0.4;
+	$scope.generalityBias = 0;
 	$scope.concatenation = 25;
 	
 	// Minimum similarity threshold.
 	$scope.minimumSimilarity = 0.05;
+	
+	// Minimum CF-IUF threshold.
+	$scope.minimumCFIUF = 0.01;
 	
 	// Twitter user restrictions.
 	$scope.maxSeedUserFollowers = 9990000;
@@ -41,15 +44,15 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	
 	$scope.processIndex = 0;
 	$scope.completedCFIUFCount = 0;
-	$scope.maxProcesses = 2;
+	$scope.maxProcesses = 6;
 	$scope.activeProcesses = 1;
-	
-	var graph = new Graph(1080, 540, "#graph");
 	
 	$scope.legend = [];
 	var fullLegend = [];
 	$scope.colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5",
 	                 "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5" ];
+	
+	var graph = new Graph(640, 540, "#graph", $scope.colors);
 	
 	$scope.isLoading = function() {
 		return $scope.status.loadingUsers || $scope.status.updatingCFIUF || $scope.status.updatingSimilarityGraph || $scope.status.clusteringNetwork;
@@ -87,6 +90,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.$on('graphZoom', function (event, data) {
 		// Let the view know we're zoomed in; add a button to restore the graph to its original form.
 		$scope.status.zoomed = true;
+		$scope.generalityBias = 0;
 		
 		// Update the collection of actually visible users.
 		$scope.visibleUsers = $scope.groups[data.group-1].users;
@@ -94,6 +98,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		var ev = {};
 		ev.groups = true;
 		ev.generalityBias = $scope.generalityBias;
+		ev.minCFIUF = $scope.minimumCFIUF;
 		ev.ontologies = _.map($scope.visibleUsers, function(user) { return user.userOntology.ontology; });
 		
 		CFIUFGroupService.doWork(ev).then(function(newOntologies) {
@@ -123,6 +128,9 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		graph.start();
 	}
 	
+	/**
+	 * Function to update the generality bias of the calculated CF-IUF.
+	 */
 	$scope.updateBias = function() {
 		if(!$scope.status.clusteringFinished) return;
 		
@@ -136,6 +144,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			event.groups = false;
 			event.ontologies = [];
 			event.generalityBias = $scope.generalityBias;
+			event.minCFIUF = $scope.minimumCFIUF;
 			
 			CFIUFService.doWork(event).then(function(data) {
 				var cfiufMaps = [];
@@ -161,6 +170,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			var event = {};
 			event.groups = true;
 			event.generalityBias = $scope.generalityBias;
+			event.minCFIUF = $scope.minimumCFIUF;
 			event.ontologies = _.map($scope.visibleUsers, function(user) { return user.userOntology.ontology; });
 			
 			CFIUFGroupService.doWork(event).then(function(newOntologies) {
@@ -190,13 +200,14 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		
 		$scope.status.updatingCFIUF = true;
 		
-		var startTime = new Date().getTime();
+		//var startTime = new Date().getTime();
 		
 		// Setup the event to send to the Web Worker.
 		var event = {};
 		event.groups = false;
 		event.ontologies = _.map(_.slice(entities, $scope.completedCFIUFCount), function(e) { return e.userOntology.ontology; });
 		event.generalityBias = $scope.generalityBias;
+		event.minCFIUF = $scope.minimumCFIUF;
 		
 		// Send the ontologies.
 		if(event.ontologies.length > 0) {
@@ -221,8 +232,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				$scope.status.updatingCFIUF = false;
 				
 				// Get the execution time for profiling purposes.
-				var endTime = new Date().getTime();
-				console.log("CF-IUF execution time: " + (endTime - startTime));
+				//var endTime = new Date().getTime();
+				//console.log("CF-IUF execution time: " + (endTime - startTime));
 			});
 		} else {
 			if(finalizing) {
@@ -234,8 +245,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			$scope.status.updatingCFIUF = false;
 			
 			// Get the execution time for profiling purposes.
-			var endTime = new Date().getTime();
-			console.log("CF-IUF execution time: " + (endTime - startTime));
+			//var endTime = new Date().getTime();
+			//console.log("CF-IUF execution time: " + (endTime - startTime));
 		}
 		
 	}
@@ -249,7 +260,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		if($scope.status.updatingSimilarityGraph) return;
 		$scope.status.updatingSimilarityGraph = true;
 		
-		var startTime = new Date().getTime();
+		//var startTime = new Date().getTime();
 		
 		// Build the event to send to the Web Worker.
 		var similarityLinks = [];
@@ -277,8 +288,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				$scope.status.updatingSimilarityGraph = false;
 			}
 			
-			var endTime = new Date().getTime();
-			console.log("Similarity graph execution time: " + (endTime - startTime));
+			//var endTime = new Date().getTime();
+			//console.log("Similarity graph execution time: " + (endTime - startTime));
 			
 			// Finally, cluster the similarity graph.
 			if(!$scope.status.clusteringNetwork) {
@@ -294,8 +305,6 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 							
 							// clusteringNetwork has changed to false. Final update.
 							$scope.clusterNetwork(userCount, similarityLinks, finalizing);
-							
-							
 							
 							// Remove this watcher.
 							removeWatchClusteringNetwork();
@@ -318,7 +327,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		// Get the nodes and links from the current graph.
 		if(!$scope.status.zoomed) {
 			graph.initializeGraph(userCount, similarityLinks, $scope.visibleUsers);
-			//graph.start(false);
+			//graph.start();
 		}
 		
 		$scope.groups = [];
@@ -347,7 +356,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				});
 				
 				// Release the nodes from the rest of the graph (and temporarily from each other).
-				//if(!$scope.status.zoomed) graph.removeNodeLinks(nodeIndex);
+				if(!$scope.status.zoomed) graph.removeNodeLinks(nodeIndex);
 			});
 			
 			// Update the groups.
@@ -361,6 +370,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		var e = {};
 		e.nodeCount = userCount;
 		e.links = similarityLinks;
+		e.zoomed = $scope.status.zoomed;
 		
 		HCSService.doWork(e).then(function(data) {
 			removeOnHCSUpdate();
@@ -380,27 +390,36 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			var ev = {};
 			ev.groups = true;
 			ev.generalityBias = $scope.generalityBias;
+			ev.minCFIUF = $scope.minimumCFIUF;
 			ev.ontologies = _.map($scope.groups, function(group) { return group.userOntology.ontology; });
 			
 			CFIUFGroupService.doWork(ev).then(function(newOntologies) {
-				var labelString = "\nTopic labels:\n\n";
+				//var labelString = "\nTopic labels:\n\n";
 				$scope.legend = [];
 				var i = $scope.groups.length;
 				
-				_.each($scope.groups, function(group, i) {
-					group.userOntology = newOntologies.ontologies[i];
-					
-					var legendText = group.userOntology.topTypes[0][0];
-					labelString += "Topic " + (i+1) + ": ";
-					
-					for(var j = 1; j < group.userOntology.topTypes.length; j++)
-						legendText += ", " + group.userOntology.topTypes[j][0];
-					
-					$scope.legend.push( {text: legendText, group: (i+1)} );
-					labelString += legendText + "\n";
-				});
-				
-				if(i == 0) $scope.legend.push( {text: "No further clusters could be determined.", group: 0} );
+				if(i === 0 && $scope.status.zoomed) $scope.legend.push( {text: "No clusters could be determined. Try adjusting the generality.", group: 0} );
+				else if(i === 1) $scope.legend.push( {text: "Only one cluster found: can't determine topic labels. Try adjusting the generality or zooming in.", group: 0} );
+				else {
+					_.each($scope.groups, function(group, i) {
+						group.userOntology = newOntologies.ontologies[i];
+						
+						var legendText = "";
+						
+						if(group.userOntology.topTypes.length > 0) {
+							var legendText = group.userOntology.topTypes[0][0];
+							
+							//labelString += "Topic " + (i+1) + ": ";
+							
+							for(var j = 1; j < group.userOntology.topTypes.length; j++)
+								legendText += ", " + group.userOntology.topTypes[j][0];
+							
+							$scope.legend.push( {text: legendText, group: (i+1)} );
+							//labelString += legendText + "\n";
+						} else
+							$scope.legend.push( {text: "Error: could not determine cluster labels.", group: (i+1)} );
+					});
+				}
 				
 				if($scope.status.awaitingFinalClustering) {
 					$scope.status.clusteringNetwork = false;
@@ -409,11 +428,13 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 						$scope.status.clusteringFinished = true;
 						$scope.status.clusteringNetwork = false;
 						
-						$timeout(function() {
-							graph.cloneGraph();
-							fullGroups = _.cloneDeep($scope.groups);
-							fullLegend = _.clone($scope.legend);
-						}, 1000);
+						if(similarityLinks < 40000) {
+							$timeout(function() {
+								graph.cloneGraph();
+								fullGroups = _.cloneDeep($scope.groups);
+								fullLegend = _.clone($scope.legend);
+							}, 1000);
+						}
 						
 					} else if($scope.status.zoomed) {
 						$scope.status.clusteringFinished = true;
@@ -425,7 +446,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 					}
 				}
 
-				console.log(labelString);
+				//console.log(labelString);
 				
 				// Evaluate the accuracy of the clustering result (if ground truth present).
 				//if(!_.isEmpty(EvaluationService.getRelevanceScores())) EvaluationService.mcc($scope.groups, $scope.visibleUsers.length);

@@ -35,7 +35,7 @@ function kruskal(nodes, edges) {
  * @param nodes
  * @param edges
  */
-function hcs(nodes, edges) {
+function hcs(nodes, edges, zoomed) {
 	
 	// A graph with one or two nodes is ignored.
 	//if(edges.length <= 1) return;
@@ -47,11 +47,15 @@ function hcs(nodes, edges) {
 	_.each(clusters, function(cluster, i) {
 		var clusterSize = cluster.length;
 		
-		// Drop clusters too small from the result.
-		if(clusterSize <= 2) {
+		// Drop clusters too small from the result (set them to the 0 group).
+		if(zoomed && clusterSize <= 1) {
+			self.postMessage( { finished: false, nodes: cluster } );
+			return;
+		} else if(!zoomed && clusterSize <= 2) {
 			self.postMessage( { finished: false, nodes: cluster } );
 			return;
 		}
+		
 		var clusterEdges = [];
 		var degrees = _.map(cluster, function() { return 0; });
 		
@@ -73,7 +77,7 @@ function hcs(nodes, edges) {
 		console.log("# of edges: " + clusterEdges.length + ", # of nodes: " + clusterSize + ", min. degree: " + minDegree);
 		
 		// Check for highly-connectedness. If so, we're done with this cluster, else call this function again with the subgraph.
-		if(minDegree > clusterSize/2)
+		if( (zoomed && minDegree >= clusterSize/2) || (!zoomed && minDegree > clusterSize/2) )
 			self.postMessage( { finished: false, nodes: cluster, edges: clusterEdges } );
 		else
 			hcs(cluster, clusterEdges);
@@ -87,7 +91,7 @@ self.addEventListener('message', function(e) {
 	var sortedEdges = _.sortBy(e.data.links, function(ln) { return ln[2]; });
 	
 	// First iteration. Input is the full network.
-	hcs(nodes, sortedEdges);
+	hcs(nodes, sortedEdges, e.data.zoomed);
 	
 	// We're done. Return this fact.
 	self.postMessage( { finished: true } );

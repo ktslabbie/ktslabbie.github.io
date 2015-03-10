@@ -9,11 +9,11 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 	 * @param height
 	 * @param id The HTML id tag
 	 */
-	function Graph(width, height, id) {
+	function Graph(width, height, id, colors) {
 		
 		var that = this;
 		
-		var color = d3.scale.category20();
+		var color = colors;
 		var fullNodes = [];
 		var fullLinks = [];
 		var nodes = []; 					// Ex. [ { name: somename, group: 0, userIndex: 0, index: 0 } ]
@@ -40,7 +40,7 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 		var link = svg.selectAll(".link");
 		var text = svg.selectAll(".node-text");
 		
-		this.getColors = function() { return color.domain(); }
+		this.getColors = function() { return color; }
 		this.getNodes = function() { return nodes; }
 		this.getLinks = function() { return links; }
 		this.getForce = function() { return force; }
@@ -244,10 +244,11 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 			
 			node = svg.selectAll(".node");
 			node = node.data(force.nodes(), function(d) {  return d.name; } );
-			node.enter().append("circle").attr("class", function(d) { return "node " + d.name; }).attr("r", 9);
+			node.enter().append("circle").attr("class", function(d) { return "node " + d.name; }).attr("r", 9)
 			node.exit().remove();
+			node.attr('opacity', function(d) { return d.group === 0 ? 0.15 : 1 });
 			node.style("visibility", function(d) { return d.group === 0 ? singleNodesVisible ? "visible" : "hidden" : "visible"; });
-			node.style("fill", function(d) { return color(d.group); });
+			node.style("fill", function(d) { return d.group === 0 ? "#333333" : color[d.group-1]; });
 			node.call(force.drag);
 			node.on("dblclick", function(d) { that.zoom(d.group); });
 			
@@ -264,6 +265,7 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 			text.attr("x", 9);
 			text.attr("y", ".31em");
 			text.attr("style", "font-weight: 300; font-size: 14px;");
+			text.attr('opacity', function(d) { return d.group === 0 ? 0.15 : 1 });
 			//text.text(function(d) { return "@" + d.name; });
 			text.text(function(d) { return d.group === 0 ? singleNodesVisible ? "@" + d.name : "" : "@" + d.name; });
 			
