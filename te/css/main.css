@@ -150,12 +150,30 @@ h1,h2,h3,h4,h5,h6 {
 	font-size: 24px;
 }
 
+.title-info {
+	color: #FFF;
+	font-size: 36px;
+	padding-top: 8px;
+	margin-right: 8px;
+	max-width: 27px;
+}
+
+.info-body {
+	font-size: 18px;
+}
+
 .title-settings {
 	color: #FFF;
 	font-size: 36px;
 	padding-top: 8px;
 	max-width: 27px;
 }
+
+/* Info */
+.modal-info {
+	width: 90%;
+}
+
 
 /* Settings */
 .modal-settings {
@@ -190,12 +208,28 @@ input[type="file"]#gtfile {
 	padding-top: 39px;
 }
 
+.col-demo-set {
+	padding-top: 19px;
+}
+
 .btn-list-upload {
-	font-size: 16px;
+	font-size: 14px;
 	padding: 9px 9px 10px 9px;
 	background-color: #F9F9FD;
 	border-color: #DDDDDD;
 	color: #111111;
+}
+
+.btn-demo-set {
+	font-size: 14px;
+	padding: 9px 9px 10px 9px;
+	background-color: #E9FDE9;
+	border-color: #DDEEDD;
+	color: #111111;
+}
+
+.btn-demo-set:hover {
+	background-color: #B9DDB9;
 }
 
 .header-bias {
@@ -352,6 +386,10 @@ div.col-tweet {
 
 .row-header {
 	margin-bottom: 20px;
+}
+
+a.no-decoration {
+	text-decoration: none;
 }
 
 .plain-link {

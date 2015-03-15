@@ -17,21 +17,21 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.keyword = "machine learning";
 	$scope.pageSize = 0;
 	$scope.refreshCnt = 0;
-	$scope.tweetsPerUser = 100;
-	$scope.userCount = 200;
+	$scope.tweetsPerUser = 150;
+	$scope.userCount = 250;
 	$scope.minimumEnglishRate = 0.7;
 	
 	// Named Entity Recognition settings.
-	$scope.nerConfidence = 0.01;
-	$scope.nerSupport = 0;
-	$scope.generalityBias = 0;
-	$scope.concatenation = 25;
+	$scope.nerConfidence = 0.002;
+	$scope.nerSupport = 2;
+	$scope.generalityBias = 0.8;
+	$scope.concatenation = 20;
 	
 	// Minimum similarity threshold.
-	$scope.minimumSimilarity = 0.05;
+	$scope.minimumSimilarity = 0.07;
 	
 	// Minimum CF-IUF threshold.
-	$scope.minimumCFIUF = 0.01;
+	$scope.minimumCFIUF = 0.002;
 	
 	// Twitter user restrictions.
 	$scope.maxSeedUserFollowers = 9990000;
@@ -65,6 +65,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		$scope.status = { loadingInitialData: false, noUserFound: false, loadingUsers: false, updatingCFIUF: false, updatingSimilarityGraph: false, 
 							clusteringNetwork: false, clusteringFinished: false, finalUpdate: false, awaitingFinalClustering: false, zoomed: false };
 		
+		CFIUFService.clear();
 		while($scope.users.length > 0) $scope.users.pop();
 		while($scope.validUsers.length > 0) $scope.validUsers.pop();
 		while($scope.visibleUsers.length > 0) $scope.visibleUsers.pop();
@@ -74,9 +75,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		fullLegend = [];
 		
 		$scope.refreshCnt = 0;
-		
 		graph.clearGraph();
-		CFIUFService.clear();
+		graph.start(false);
 		
 		$scope.processIndex = 0;
 		$scope.completedCFIUFCount = 0;
@@ -90,7 +90,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.$on('graphZoom', function (event, data) {
 		// Let the view know we're zoomed in; add a button to restore the graph to its original form.
 		$scope.status.zoomed = true;
-		$scope.generalityBias = 0;
+		$scope.generalityBias = 0.2;
 		
 		// Update the collection of actually visible users.
 		$scope.visibleUsers = $scope.groups[data.group-1].users;
@@ -119,13 +119,19 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	 */
 	$scope.restoreGraph = function() {
 		if(!$scope.status.clusteringFinished) return;
-		
-		graph.restoreGraph();
-		$scope.status.zoomed = false;
-		$scope.legend = fullLegend;
 		$scope.visibleUsers = $scope.validUsers;
-		$scope.groups = fullGroups;
-		graph.start();
+		$scope.status.zoomed = false;
+		
+		
+		if(fullGroups.length === 0) {
+			graph.clearGraph();
+			$scope.updateBias();
+		} else {
+			graph.restoreGraph();
+			$scope.legend = fullLegend;
+			$scope.groups = fullGroups;
+			graph.start();
+		}
 	}
 	
 	/**
@@ -428,7 +434,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 						$scope.status.clusteringFinished = true;
 						$scope.status.clusteringNetwork = false;
 						
-						if(similarityLinks < 40000) {
+						if(similarityLinks.length < 20000) {
 							$timeout(function() {
 								graph.cloneGraph();
 								fullGroups = _.cloneDeep($scope.groups);
@@ -626,6 +632,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	 * Get a list of users from a seed user's followers (and their followers (and their followers (and etc.))).
 	 */
 	$scope.getUserListFromSeed = function(user) {
+		$scope.init();
+		
 		FollowersList.list({ screenName: user.screenName, userCount: $scope.userCount }, function(userScreenNameList) {
 			_.each(userScreenNameList, function(screenName) {
 				$scope.users.push({ screenName: screenName });
@@ -639,6 +647,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	 * Get a list of users who mentioned some keyword from Twitter.
 	 */
 	$scope.getKeywordUsers = function(keyword) {
+		$scope.init();
 		$scope.status.loadingInitialData = true;
 		
 		KeywordUserList.list({ keyword: encodeURIComponent(keyword), userCount: $scope.userCount }, function(keywordUserList) {

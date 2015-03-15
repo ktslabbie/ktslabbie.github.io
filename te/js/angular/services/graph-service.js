@@ -242,6 +242,17 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 		
 		this.start = function(singleNodesVisible) {
 			
+			//text = svg.selectAll(".node-text");
+			text = text.data(force.nodes());
+			text.enter().append("text");
+			text.exit().remove();
+			text.attr("x", 9);
+			text.attr("y", ".31em");
+			text.attr("style", "font-weight: 300; font-size: 14px;");
+			text.attr('opacity', function(d) { return d.group === 0 ? 0.15 : 0.75 });
+			//text.text(function(d) { return "@" + d.name; });
+			text.text(function(d) { return d.group === 0 ? singleNodesVisible ? "@" + d.name : "" : "@" + d.name; });
+			
 			node = svg.selectAll(".node");
 			node = node.data(force.nodes(), function(d) {  return d.name; } );
 			node.enter().append("circle").attr("class", function(d) { return "node " + d.name; }).attr("r", 9)
@@ -258,16 +269,7 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 			link.exit().remove();
 			//link.style("stroke-width", function(d) { var width = (Math.pow(d.value*3, 2)); return (width < 0.5) ? 0.5 : (width > 3) ? 3 : width; });
 
-			//text = svg.selectAll(".node-text");
-			text = text.data(force.nodes());
-			text.enter().append("text");
-			text.exit().remove();
-			text.attr("x", 9);
-			text.attr("y", ".31em");
-			text.attr("style", "font-weight: 300; font-size: 14px;");
-			text.attr('opacity', function(d) { return d.group === 0 ? 0.15 : 1 });
-			//text.text(function(d) { return "@" + d.name; });
-			text.text(function(d) { return d.group === 0 ? singleNodesVisible ? "@" + d.name : "" : "@" + d.name; });
+			
 			
 			force.start();
 		}

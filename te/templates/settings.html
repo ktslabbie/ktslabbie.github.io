@@ -1,11 +1,11 @@
-<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-settings">
 		<div class="modal-content">
 			<div class="modal-header text-center">
 				<button type="button" class="close" data-dismiss="modal">
 					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 				</button>
-				<h4 class="modal-title" id="myModalLabel">Settings</h4>
+				<h4 class="modal-title" id="settingsModalLabel">Settings</h4>
 			</div>
 			<div class="modal-body">
 				<div class="row">
@@ -17,13 +17,10 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-3">
-			    		Number of users to collect: <input type="text" ng-model="userCount" class="form-control">
-			    	</div>
 			    	<div class="col-md-3">
 			    		Number of tweets per user: <input type="text" ng-model="tweetsPerUser" class="form-control">
 			    	</div>
-			    	<div class="col-md-3">
+			    	<div class="col-md-offset-3 col-md-3">
 			    		CF-IUF threshold: <input type="text" ng-model="minimumCFIUF" class="form-control">
 			    	</div>
 			    	<div class="col-md-3">

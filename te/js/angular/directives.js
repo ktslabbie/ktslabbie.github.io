@@ -4,7 +4,7 @@ var twitterDirectives = angular.module('twitterWeb.directives', [])
 	return {
 		link: function(scope, element, attr) {
 			var gtFileInput = $('#gtfile');
-
+			
 			// Function to upload a GT file.
 			element.on('click', function() {
 				if (!window.FileReader) {
@@ -17,6 +17,40 @@ var twitterDirectives = angular.module('twitterWeb.directives', [])
 		}
 	};
 }])
+
+.directive('firstVisit', function() {
+	return {
+		link: function(scope, element, attr) {
+			var firstVisit = (localStorage.firstVisit || 1);
+			
+			if(firstVisit === 1) {
+				element.modal('show');
+				localStorage.firstVisit = 1;
+			}
+		}
+	};
+})
+
+.directive('demoButton', function() {
+	return {
+		link: function(scope, element, attr) {
+
+			var firstVisit = (localStorage.firstVisit || 1);
+			
+			if(firstVisit === 1) {
+				var el = angular.element('#infoModal');
+				el.modal('show');
+				localStorage.firstVisit = 1;
+			}
+			
+			element.on('click', function() {
+				scope.init();
+				scope.users = _.map(DEMO_SET, function(s){ return { screenName: s }; });
+				scope.updateUsers(0);
+			});
+		}
+	};
+})
 
 .directive('gtInput', ['EvaluationService', function(EvaluationService) {
 	return {

@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,700' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="css/main.css">
@@ -19,13 +19,14 @@
 		<h1 class="title text-center">
 			<a href="/" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
 			<a href="" data-toggle="modal" data-target="#settingsModal" ng-click="openModal = true"><i class="fa fa-gear pull-right title-settings"></i></a>
+			<a href="" id="infoButtonID" data-toggle="modal" data-target="#infoModal" ng-click="openModal = true"><i class="fa fa-info-circle pull-right title-info"></i></a>
 		</h1>
 	</div>
 
     <div class="container" ng-controller="TwitterController">
    		<div class="row">
    			<div class="col-md-1">
-   				<h4>Users:</h4>
+   				<h4>Sample size:</h4>
    				<div class="input-group input-group-lg">
 			    	<input type="text" ng-model="userCount" class="form-control">
 			    </div>
@@ -51,14 +52,18 @@
 			    </form>
 		    </div>
 		    
-		    <div class="col-md-2 col-list-upload">
+		    <div class="col-md-1 col-list-upload">
 				<input type="file" id="gtfile" ng-model="gtFile" gt-input>
-				<button id="gtupload" class="btn btn-default btn-list-upload" type="button" gt-button>Upload a user list</button>
+				<button id="gtupload" class="btn btn-default btn-list-upload" type="button" gt-button>Upload user list</button>
+			</div>
+			<div class="col-md-1 col-demo-set">
+				<a class="no-decoration" href="" data-toggle="modal" data-target="#demoSetModal" ng-click="openModal = true">What's this?</a>
+				<button class="btn btn-default btn-demo-set" type="button" demo-button>Try demo set</button>
 			</div>
 			
 			<div class="col-md-1">
-	    		<h4 class="header-bias">Generality:</h4>
-	    		<input type="range" id="genbias" min=-1 max=1 step=0.1 ng-model="generalityBias" ng-mouseup="updateBias()">
+	    		<h4 class="header-bias">Topic scope:</h4>
+	    		<input type="range" id="genbias" min=0 max=1 step=0.05 ng-model="generalityBias" ng-mouseup="updateBias()">
 	    	</div>
 	    	
 	    	<div class="col-md-1 col-bias-value">
@@ -70,7 +75,7 @@
 
 		<div class="row" ng-cloak>
 			<div class="col-md-6 col-no-pad-top animate-show-hide" ng-show="visibleUsers.length > 0">
-	    		<h3>Got <span ng-bind="visibleUsers.length"></span> valid users (with enough English tweets)</h3>
+	    		<h3>Got <span ng-bind="visibleUsers.length"></span> valid users</h3>
 	    	</div>
 	    	<div class="col-md-3 col-no-pad-top animate-show-hide text-right" ng-show="visibleUsers.length > 1 && isLoading()">
 	    		<h3>Calculating topic clusters...</h3>
@@ -122,7 +127,9 @@
 			</div>
 		</div>
 		
+		<div ng-include="'templates/info.html'"></div>
    		<div ng-include="'templates/settings.html'"></div>
+   		<div ng-include="'templates/demo-set.html'"></div>
     </div>
     
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -136,6 +143,7 @@
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
        
 	<script src="js/vendor/ng-infinite-scroll.min.js"></script>
+	<script src="js/demo-set.js"></script>
 	<script src="js/plugins.js"></script>
 	<script src="js/main.js"></script>
 	<script src="js/angular/services/graph-service.js"></script>
