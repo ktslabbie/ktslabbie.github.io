@@ -1,3 +1,3 @@
 var SETTINGS = {
-		apiHostName: "/api/";
+		apiHostName: "/api/",
 }

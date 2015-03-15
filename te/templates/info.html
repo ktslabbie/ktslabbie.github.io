@@ -1,0 +1,57 @@
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true" first-visit>
+	<div class="modal-dialog modal-info">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h1 class="modal-title" id="infoModalLabel">Twinterest Explorer</h1>
+			</div>
+			<article class="modal-body info-body">
+				<h2>What's this?</h2>
+				<p>
+					Twinterest Explorer is an academic exercise in fast, real-time topic clustering and automatic labeling of unstructured documents. The underlying
+					algorithms are designed to be especially useful in scenarios where the quality and quantity of text of cannot be guaranteed,
+					such as on the Social Web. This makes Twitter a great candidate for experimentation. Please keep in mind that this is an unpolished proof-of-concept,
+					and still under development. You will likely encounter bugs, or the server may be slow or not even running at all.
+				</p>
+				<h2>How do I use it?</h2>
+				<p>
+					Input a Twitter user or keyword you'd like to explore. Hit "Go!" and let it run!
+					You can adjust the topic scope of the groups that should appear in the graph with the slider, and zoom into them to divide them further into sub-topics.
+				</p>
+				<h2>So what can it do?</h2>
+				<p>
+					It can group and visualize streams of users by topic (or interests). Users are gathered directly from Twitter through
+					keyword search, by collecting the neighborhood (followers/friends) of a seed user, or by providing a user-defined list of screen names.
+					Topic scope can be arbitrarily narrow or broad (e.g. "iPad Mini" -> "Apple PDAs" -> "Electronic device"): this can be adjusted in real-time with a slider.
+					Detected clusters are visualized in real-time as new users are processed in the background, using a colored and labeled graph.
+					This graph can be explored by adjusting topic scope and zooming in on clusters. Zooming in will allow a cluster to be divided into sub-clusters
+					(sub-topics within the broader topic). Clusters are labeled automatically with the most characteristic traits for that cluster.
+				</p>
+				<h2>And how is that useful?</h2>
+				<p>
+					Other than the "cool" factor, on a small scale where real-time visualization is still possible such as in this application, 
+					real-life usefulness is perhaps somewhat limited. Still, there are some interesting things you can do with it.
+					Consider using it to find out which of your followers/friends post about conceptually similar things, and group them by interest automatically.
+					Or you can discover which users are consistently interested in a given topic to get a better idea of who to follow
+					(is their mention of "machine learning" a one-off thing, or are they actually into it?).
+					For ambiguous keywords, you can separate people into concrete interest groups.
+				</p>
+				<p>
+					For larger document clustering-type applications where real-time visualization is not necessary, the underlying methods provide benefits in terms of speed, 
+					accuracy and the ability to deal with noisy and sparse documents over state-of-the-art approaches such as Latent Dirichlet Allocation.
+					Additionally, the output of the clustering is hierarchical, and includes automatic cluster labeling.
+					You can see a complete account of our findings in the paper:  -to be published-
+				</p>
+				<!-- <h2>I'd like to hear technicals. How does it work?</h2>
+				<p>
+					-placeholder-
+				</p> -->
+			</article>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">All right, let me try!</button>
+			</div>
+		</div>
+	</div>
+</div>
