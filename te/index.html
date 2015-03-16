@@ -17,7 +17,7 @@
 <body ng-app="twitterWeb.app">
 	<div class="container-fluid title-bar">
 		<h1 class="title text-center">
-			<a href="/" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
+			<a href="/te" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
 			<a href="" data-toggle="modal" data-target="#settingsModal" ng-click="openModal = true"><i class="fa fa-gear pull-right title-settings"></i></a>
 		</h1>
 	</div>
@@ -57,7 +57,7 @@
 			</div>
 			
 			<div class="col-md-1">
-	    		<h4 class="header-bias">Generality:</h4>
+	    		<h4 class="header-bias">Interest scope:</h4>
 	    		<input type="range" id="genbias" min=-1 max=1 step=0.1 ng-model="generalityBias" ng-mouseup="updateBias()">
 	    	</div>
 	    	
