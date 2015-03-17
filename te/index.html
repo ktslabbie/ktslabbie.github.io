@@ -98,7 +98,19 @@
             <div class="row"><h1 class="col-md-12 text-center text-muted">Loading users...</h1></div>
             <div class="row spinner-large text-center"> <i class="fa fa-spinner fa-spin"></i></div>
         </div>
-        <div class="col-md-5 user-area">
+
+        <div class="col-md-push-5 col-md-7 graph-area">
+            <div class="row text-center animate-show-hide" ng-show="visibleUsers.length > 0">
+                <div id="graph" class="graph col-md-12"></div>
+                <div class="col-md-12 text-left" ng-repeat="entry in legend track by $index">
+                    <div class="col-md-12" style="font-size: 16px; display: inline;">
+                        <div style="display: inline; background-color: {{ colors[entry.group-1] }}; width: 48px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>&nbsp;&nbsp;&nbsp;<div style="display: inline;" ng-bind="entry.text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-pull-7 col-md-5 user-area">
             <div infinite-scroll="loadMore()" infinite-scroll-disabled="pageSize >= 300" infinite-scroll-distance='0'>
                 <div class="row panel-target-user" ng-include="'templates/user-panel.html'" ng-repeat="targetUser in visibleUsers | limitTo:pageSize"></div>
             </div>
@@ -115,16 +127,7 @@
             </div>
         </div>
 
-        <div class="col-md-7 graph-area">
-            <div class="row text-center animate-show-hide" ng-show="visibleUsers.length > 0">
-                <div id="graph" class="graph col-md-12"></div>
-                <div class="col-md-12 text-left" ng-repeat="entry in legend track by $index">
-                    <div class="col-md-12" style="font-size: 16px; display: inline;">
-                        <div style="display: inline; background-color: {{ colors[entry.group-1] }}; width: 48px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>&nbsp;&nbsp;&nbsp;<div style="display: inline;" ng-bind="entry.text"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <div ng-include="'templates/info.html'"></div>
