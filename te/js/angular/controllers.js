@@ -22,9 +22,9 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.minimumEnglishRate = 0.7;
 	
 	// Named Entity Recognition settings.
-	$scope.nerConfidence = 0.0001;
+	$scope.nerConfidence = 0.00011;
 	$scope.nerSupport = 2;
-	$scope.generalityBias = 0.8;
+	$scope.generalityBias = 0.5;
 	$scope.concatenation = 20;
 	
 	// Minimum similarity threshold.
@@ -90,7 +90,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.$on('graphZoom', function (event, data) {
 		// Let the view know we're zoomed in; add a button to restore the graph to its original form.
 		$scope.status.zoomed = true;
-		$scope.generalityBias = 0.2;
+		$scope.generalityBias = 0.5;
 		
 		// Update the collection of actually visible users.
 		$scope.visibleUsers = $scope.groups[data.group-1].users;

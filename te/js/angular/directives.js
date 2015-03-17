@@ -19,32 +19,25 @@ var twitterDirectives = angular.module('twitterWeb.directives', [])
 }])
 
 .directive('firstVisit', function() {
-	return {
-		link: function(scope, element, attr) {
-			var firstVisit = (localStorage.firstVisit || 1);
-			
-			if(firstVisit === 1) {
-				element.modal('show');
-				localStorage.firstVisit = 1;
-			}
-		}
-	};
+    return {
+        link: function(scope, element, attr) {
+            var firstVisit = (localStorage.firstVisit || 1);
+
+            if(firstVisit == 1) {
+                element.modal('show');
+                localStorage.firstVisit = 0;
+            }
+        }
+    };
 })
 
 .directive('demoButton', function() {
 	return {
 		link: function(scope, element, attr) {
-
-			var firstVisit = (localStorage.firstVisit || 1);
-			
-			if(firstVisit === 1) {
-				var el = angular.element('#infoModal');
-				el.modal('show');
-				localStorage.firstVisit = 1;
-			}
 			
 			element.on('click', function() {
 				scope.init();
+				scope.generalityBias = 0.8;
 				scope.users = _.map(DEMO_SET, function(s){ return { screenName: s }; });
 				scope.updateUsers(0);
 			});

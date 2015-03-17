@@ -17,7 +17,7 @@
 <body ng-app="twitterWeb.app">
 <div class="container-fluid title-bar">
     <h1 class="title text-center">
-        <a href="/te" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
+        <a href="te/" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
         <a href="" data-toggle="modal" data-target="#settingsModal" ng-click="openModal = true"><i class="fa fa-gear pull-right title-settings"></i></a>
         <a href="" id="infoButtonID" data-toggle="modal" data-target="#infoModal" ng-click="openModal = true"><i class="fa fa-info-circle pull-right title-info"></i></a>
     </h1>
@@ -56,9 +56,9 @@
             <input type="file" id="gtfile" ng-model="gtFile" gt-input>
             <button id="gtupload" class="btn btn-default btn-list-upload" type="button" gt-button>Upload user list</button>
         </div>
-        <div class="col-md-1 col-demo-set">
-            <a class="no-decoration" href="" data-toggle="modal" data-target="#demoSetModal" ng-click="openModal = true">What's this?</a>
-            <button class="btn btn-default btn-demo-set" type="button" demo-button>Try demo set</button>
+        <div class="col-md-1 col-demo-set text-left">
+            <span><a class="row no-decoration" href="" data-toggle="modal" data-target="#demoSetModal" ng-click="openModal = true">What's this?</a></span>
+            <button class="row btn btn-default btn-demo-set" type="button" demo-button>Try demo set</button>
         </div>
 
         <div class="col-md-1">
