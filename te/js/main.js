@@ -1,3 +1,3 @@
 var SETTINGS = {
-		apiHostName: "/api/",
+		apiHostName: "http://110.4.228.85:8090/api/",
 }
