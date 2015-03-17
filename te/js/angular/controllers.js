@@ -22,7 +22,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.minimumEnglishRate = 0.7;
 	
 	// Named Entity Recognition settings.
-	$scope.nerConfidence = 0.002;
+	$scope.nerConfidence = 0.0001;
 	$scope.nerSupport = 2;
 	$scope.generalityBias = 0.8;
 	$scope.concatenation = 20;
