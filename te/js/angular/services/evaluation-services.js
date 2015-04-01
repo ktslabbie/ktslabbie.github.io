@@ -77,7 +77,7 @@ evalService.factory("EvaluationService", function() {
 					}
 				});
 			}
-			console.log("Added " + cnt + " users in total.");
+			//console.log("Added " + cnt + " users in total.");
 			//console.log("Topics: " + JSON.stringify(GT_TOPICS));
 			//console.log("Sub-topics: " + JSON.stringify(GT_SUBTOPICS));
 		},
@@ -158,7 +158,7 @@ evalService.factory("EvaluationService", function() {
         	var output = "";
 
         	if(_.isEmpty(GT_USERS) || _.isEmpty(GT_TOPICS)) {
-        		console.log("ERROR: cannot evaluate clusters. Upload a ground truth first!");
+        		//console.log("ERROR: cannot evaluate clusters. Upload a ground truth first!");
         		return;
         	}
 
@@ -344,11 +344,11 @@ evalService.factory("EvaluationService", function() {
 			output += "F-score: " + fScore + ", corrected for user count: " + fScore*corr + "\n";
 			output += "MCC: " + mcc + ", corrected for user count: " + mcc*corr + "\n";
 
-        	console.log(output);
+        	//console.log(output);
         },
         
         prepareTMTData: function(users) {
-    		console.log("Preparing TMT data.");
+    		//console.log("Preparing TMT data.");
     		
     		var allCount = 0;
     		var userCount = 0;

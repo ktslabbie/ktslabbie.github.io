@@ -107,11 +107,11 @@ var workerService = angular.module('twitterWeb.WorkerServices', [])
         },
         
         restart: function() {
-        	console.log("Terminate simworkers.");
+        	//console.log("Terminate simworkers.");
         	for(var i = 0; i < workerCount; i++) {
         		workers[i].terminate();
         	}
-        	console.log("Terminated?");
+        	//console.log("Terminated?");
         	createWorkers();
         }
     };

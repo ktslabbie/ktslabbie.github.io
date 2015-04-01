@@ -6,7 +6,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
                                 		   CFIUFService, CFIUFGroupService, HCSService, EvaluationService, Graph) {
 	
 	$scope.status = { loadingInitialData: false, noUserFound: false, loadingUsers: false, updatingCFIUF: false, updatingSimilarityGraph: false, 
-						clusteringNetwork: false, clusteringFinished: false, finalUpdate: false, awaitingFinalClustering: false, zoomed: false };
+						clusteringNetwork: false, clusteringFinished: false, finalUpdate: false, awaitingFinalClustering: false, zoomed: false, connectionError: false };
 	
 	$scope.users = [];
 	$scope.validUsers = [];
@@ -63,7 +63,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	 */
 	$scope.init = function() {
 		$scope.status = { loadingInitialData: false, noUserFound: false, loadingUsers: false, updatingCFIUF: false, updatingSimilarityGraph: false, 
-							clusteringNetwork: false, clusteringFinished: false, finalUpdate: false, awaitingFinalClustering: false, zoomed: false };
+							clusteringNetwork: false, clusteringFinished: false, finalUpdate: false, awaitingFinalClustering: false, zoomed: false, connectionError: false };
 		
 		CFIUFService.clear();
 		while($scope.users.length > 0) $scope.users.pop();
@@ -404,8 +404,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				$scope.legend = [];
 				var i = $scope.groups.length;
 				
-				if(i === 0 && $scope.status.zoomed) $scope.legend.push( {text: "No clusters could be determined. Try adjusting the generality.", group: 0} );
-				else if(i === 1) $scope.legend.push( {text: "Only one cluster found: can't determine topic labels. Try adjusting the generality or zooming in.", group: 0} );
+				if(i === 0 && $scope.status.zoomed) $scope.legend.push( {text: "No clusters could be determined. Try adjusting the topic scope.", group: 0} );
+				else if(i === 1) $scope.legend.push( {text: "Only one cluster found: can't determine topic labels. Try adjusting the topic scope or zooming in.", group: 0} );
 				else {
 					_.each($scope.groups, function(group, i) {
 						group.userOntology = newOntologies.ontologies[i];
@@ -464,7 +464,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	 * Function to cancel graphing and start from the similarity graph again. 
 	 */
 	function finalize() {
-		console.log("Finalizing.");
+		//console.log("Finalizing.");
 		
 		// Reset and apply final update.
 		SimilarityService.restart();
@@ -492,7 +492,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		if($scope.status.loadingUsers && !$scope.status.updatingSimilarityGraph) {
 			updateCFIUF($scope.validUsers, false);
 		} else if(!$scope.status.loadingUsers) {
-			console.log("Final 'userUpdated' has been broadcast (we're done collecting). Add a watcher for the final CF-IUF, or just do it if the final update is pending.");
+			//console.log("Final 'userUpdated' has been broadcast (we're done collecting). Add a watcher for the final CF-IUF, or just do it if the final update is pending.");
 			finalize();
 		}
 	});
@@ -536,6 +536,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 					// User doesn't exist in Twitter.
 					$scope.status.noUserFound = true;
 				}
+		}, function(error) {
+			$scope.status.connectionError = error.statusText;
 		});
 	};
 
@@ -574,6 +576,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				
 				// Broadcast that we have updated a user (whether valid or not).
 				$scope.$broadcast('userUpdated');
+		}, function(error) {
+			$scope.status.connectionError = error.statusText;
 		});
 	}
 	
@@ -615,7 +619,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				// Check if this was the last process...
 				if($scope.activeProcesses === 0) {
 					
-					console.log("Last process detected!");
+					//console.log("Last process detected!");
 					
 					// Yep. This means we're done.
 					$scope.status.loadingUsers = false;
@@ -640,6 +644,8 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			});
 			
 			$scope.updateUsers(1);
+		}, function(error) {
+			$scope.status.connectionError = error.statusText;
 		});
 	}
 	
@@ -657,6 +663,9 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			
 			$scope.status.loadingInitialData = false;
 			$scope.updateUsers(0);
+			
+		}, function(error) {
+			$scope.status.connectionError = error.statusText;
 		});
 	};
 	

@@ -17,7 +17,7 @@
 <body ng-app="twitterWeb.app">
 <div class="container-fluid title-bar">
     <h1 class="title text-center">
-        <a href="/te/" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
+        <a href="/" target="_self" class="plain-link"><img class="twitter-icon" ng-src="img/twitter-256.png" height="48"> Twinterest Explorer <span class="title-beta">(Beta)</span></a>
         <a href="" data-toggle="modal" data-target="#settingsModal" ng-click="openModal = true"><i class="fa fa-gear pull-right title-settings"></i></a>
         <a href="" id="infoButtonID" data-toggle="modal" data-target="#infoModal" ng-click="openModal = true"><i class="fa fa-info-circle pull-right title-info"></i></a>
     </h1>
@@ -70,7 +70,7 @@
             <output class="output-bias" for="genbias" id=volume ng-bind="generalityBias"></output>
         </div>
 
-        <div class="col-md-1 col-spinner text-right" ng-if="isLoading()"><i class="fa fa-spinner fa-spin"></i></div>
+        <div class="col-md-1 col-spinner text-right" ng-if="isLoading() && !status.connectionError"><i class="fa fa-spinner fa-spin"></i></div>
     </div>
 
     <div class="row" ng-cloak>
@@ -91,10 +91,11 @@
         </div>
 
         <h1 class="col-md-12 text-center text-muted" style="margin-top: 64px;" ng-if="status.noUserFound">No user found with that screen name.</h1>
+        <h1 class="col-md-12 text-center text-muted" style="margin-top: 64px;" ng-if="status.connectionError">Error! Server not running? Status: <span ng-bind="status.connectionError"></span></h1>
     </div>
 
     <div class="row" ng-cloak>
-        <div class="col-md-12 col-loading" ng-if="status.loadingInitialData">
+        <div class="col-md-12 col-loading" ng-if="status.loadingInitialData && !status.connectionError">
             <div class="row"><h1 class="col-md-12 text-center text-muted">Loading users...</h1></div>
             <div class="row spinner-large text-center"> <i class="fa fa-spinner fa-spin"></i></div>
         </div>
