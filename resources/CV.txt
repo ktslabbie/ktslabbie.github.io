@@ -1,5 +1,4 @@
-####################
-# PERSONAL DETAILS #
+  PERSONAL DETAILS
 ####################
 
 [Name]    : Kristian Slabbekoorn
@@ -9,8 +8,7 @@
 [Homepage]: http://ktslabbie.github.io
 
 
-#############
-# EDUCATION #
+  EDUCATION
 #############
 
 2012-- | Ph.D at Tokyo Institute of Technology, Japan (Expected)
@@ -31,9 +29,8 @@
        | NOTABLES: Thesis performed as part of a five-month internship at the 
        |           Cybermedia Center of Osaka University, Japan.
 
-	   
-##############
-# EXPERIENCE #
+
+  EXPERIENCE
 ##############
                                       Employment
 =====================================================================================
@@ -119,9 +116,8 @@
        |     "The translation [...] is mostly spotless and is very well done. [...]
        |      one of the finest examples of fan efforts in video gaming."
 
-	   
-#############
-# LANGUAGES #
+
+  LANGUAGES
 #############
 
 English  : Fluent                                           (TOEIC score: 990 [2012])
@@ -129,8 +125,7 @@ Japanese : Professional                                              (JLPT N1 [2
 Dutch    : Native
 
 
-###################################################
-# COMPUTER SKILLS (ESTIMATED YEARS OF EXPERIENCE) #
+  COMPUTER SKILLS (ESTIMATED YEARS OF EXPERIENCE)
 ###################################################
 
 Imperative : Java (10+), Python (2), C (1)
@@ -142,8 +137,7 @@ OS         : Windows (10+), UNIX (7), OSX (2), Android (1)
 Platforms  : Amazon AWS (1), Heroku (1)
 
 
-#########################
-# SELECTED PUBLICATIONS #
+  SELECTED PUBLICATIONS
 #########################
 
 - Slabbekoorn, K., Noro, T., Tokuda, T. Twitter User Recommendation Based on User
