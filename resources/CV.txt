@@ -1,20 +1,21 @@
-
- PERSONAL DETAILS
-#####################################################################################
+####################
+# PERSONAL DETAILS #
+####################
 
 [Name]    : Kristian Slabbekoorn
-[Address] : ---, Kanagawa, Japan
-[Mobile]  : +81 (80) xxxx xxxx
+[Address] : XXXX, Kanagawa, Japan
+[Mobile]  : +81 (80) XXXX XXXX
 [Email]   : kristian@solvelocalization.com
 [Homepage]: http://ktslabbie.github.io
 
 
- EDUCATION
-#####################################################################################
+#############
+# EDUCATION #
+#############
 
 2012-- | Ph.D at Tokyo Institute of Technology, Japan (Expected)
   2015 | ----------------------------------------------------------------------------
-       | Research on graph-based topic clustering and visualization on the 
+       | Research on graph-based topic/interest clustering and visualization on the 
        | Social Web.
 
 2010-- | MSc. Computer Science at Delft University of Technology, The Netherlands
@@ -30,11 +31,10 @@
        | NOTABLES: Thesis performed as part of a five-month internship at the 
        |           Cybermedia Center of Osaka University, Japan.
 
-
- EXPERIENCE
-#####################################################################################
-
-
+	   
+##############
+# EXPERIENCE #
+##############
                                       Employment
 =====================================================================================
 
@@ -52,6 +52,7 @@
        | Developed the front-end of a Microsoft Office proficiency assessment tool. 
        | The application has seen real use in screening applicants at the University
        | of Colombo, Sri Lanka.
+       |
        | KEY TECHNOLOGIES: PHP, HTML/CSS/Javascript, XML/XSLT, MySQL
 
 
@@ -64,6 +65,7 @@
        | implement real-time unsupervised topic clustering, labeling and 
        | visualization of Twitter users. The resulting hierarchical topic graphs can
        | explored by zooming in/out or adjusting the topic scope.
+       |
        | KEY TECHNOLOGIES: Java, REST, HTML5/CSS/Javascript, PostgreSQL, DBpedia,
        |                   Redis, AngularJS, D3.js, Web Workers, Amazon AWS
 
@@ -73,62 +75,66 @@
        | app stores. It is an attempt to tackle the problem of app discovery by
        | re-ranking games by their quality rather than popularity, with filtering
        | tools to browse and search for games more efficiently.
+       | 
        | KEY TECHNOLOGIES: Python/Django, REST, HTML5/CSS/Javascript, PostgreSQL,
        |                   AngularJS, ElasticSearch, Heroku
 
 2014   | The Willy Report (willyreport.wordpress.com)
-       | ----------------------------------------------------------------------------
+       |----------------------------------------------------------------------------
        | I am the (at the time anonymous) author of the influential Willy Report,
        | which analyzes trading logs from the collapsed Mt. Gox Bitcoin exchange to
        | show that fraudulent bots were likely related to Bitcoin's $1200+ price
        | bubble and the exchange's loss of over $400 million worth of Bitcoin. The
        | report received worldwide media attention and is still referenced on an
        | almost daily basis within the Bitcoin community. A follow-up report by
-       | security firm WizSec, further confirming many of the findings, is being
-       | deliberated by the Tokyo Metropolitan Police's cybercrime unit and other
-       | official investigators.
+       | security firm WizSec, confirming the findings, is being deliberated by the
+       | Tokyo Metropolitan Police cybercrime unit and other official investigators.
+       |
        | FEATURED IN: The Guardian [3], International Business Times [4],
        |              TechCrunch [5], CNBC [6], and many more.
 
 2013   | Midas: machine learning-based Bitcoin trading (github.com/ktslabbie/Midas)
-       | ----------------------------------------------------------------------------
+       |-----------------------------------------------------------------------------
        | Midas is a Chrome plugin that implements a real-time trading algorithm based
        | on technical analysis, using supervised machine learning on historical data
        | to train a regression model.
-       | KEY TECHNOLOGIES: HTML/CSS/JS, Machine learning, Bitcoin, Chrome plugin
+       |
+       | KEY TECHNOLOGIES: HTML/CSS/JS, Machine learning, Bitcoin, Chrome plugin dev.
 
 
                          Extra-curriculars / volunteer work
 =====================================================================================
 
 2013   | TEDxTitech 2013 (ted.com/tedx/events/8749)
-       | ----------------------------------------------------------------------------
+       |-----------------------------------------------------------------------------
        | Organizer on the Sponsor Team, where I was responsible for negotiating with
        | companies to help fund the event. Eventual sponsors included Hitachi and
        | Gurunavi, among others.
 
 2008-- | Localization of Japanese media
-  2011 | ----------------------------------------------------------------------------
+  2011 |-----------------------------------------------------------------------------
        | Headed several fan-translation projects of Japanese video games. The
        | localizations have received critical acclaim from reputable gaming sites,
        | e.g. HardcoreGaming101 [7] on my translation of a 1996 adventure game:
        |     "The translation [...] is mostly spotless and is very well done. [...]
        |      one of the finest examples of fan efforts in video gaming."
 
-
- LANGUAGES
-#####################################################################################
+	   
+#############
+# LANGUAGES #
+#############
 
 English  : Fluent                                           (TOEIC score: 990 [2012])
 Japanese : Professional                                              (JLPT N1 [2009])
 Dutch    : Native
 
 
- COMPUTER SKILLS (EST. YEARS OF EXPERIENCE)
-#####################################################################################
+###################################################
+# COMPUTER SKILLS (ESTIMATED YEARS OF EXPERIENCE) #
+###################################################
 
+Imperative : Java (10+), Python (2), C (1)
 Scripting  : Javascript (5), PHP (2), Node.js (0.5), LaTeX (4)
-Imperative : Java (10+), Python (2), C (1)                         
 Functional : Haskell (0.5)
 DB         : MySQL/PostgreSQL (5), Redis (1)
 Web        : HTML5/CSS (5), AngularJS (1), Django (1)
@@ -136,17 +142,21 @@ OS         : Windows (10+), UNIX (7), OSX (2), Android (1)
 Platforms  : Amazon AWS (1), Heroku (1)
 
 
- SELECTED PUBLICATIONS
-#####################################################################################
+#########################
+# SELECTED PUBLICATIONS #
+#########################
 
 - Slabbekoorn, K., Noro, T., Tokuda, T. Twitter User Recommendation Based on User
   Relations And Taxonomical Analysis. 23nd European-Japanese Conference on
   Information Modelling and Knowledge Bases (EJC), 2013
+  
 - Slabbekoorn, K., Hollink, L., Houben, G.J. Domain-Aware Ontology Matching. 
   Proceedings of the 11th Intl. Semantic Web Conference (ISWC), 2012
+  
 - Slabbekoorn, K., Hollink, L., Houben, G.J. Domain-aware Matching of Events to
   DBpedia. Proceedings of the DeRiVE Workshop at ISWC, 2011
 
+  
 [1] BSc. Thesis.
     http://repository.tudelft.nl/view/ir/uuid%3A75567438-22a6-4a78-94b6-f8e412f83760/
 [2] MSc. Thesis.
