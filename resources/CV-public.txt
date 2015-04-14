@@ -1,14 +1,14 @@
-  PERSONAL DETAILS
+  PERSONAL DETAILS 
 ####################
 
 [Name]    : Kristian Slabbekoorn
-[Address] : XXXX, Kanagawa, Japan
+[Address] : Kanagawa, Japan
 [Mobile]  : +81 (80) XXXX XXXX
-[Email]   : kristian@solvelocalization.com
+[Email]   : kt.slabbekoorn@gmail.com
 [Homepage]: http://ktslabbie.github.io
 
 
-  EDUCATION
+  EDUCATION  
 #############
 
 2012-- | Ph.D at Tokyo Institute of Technology, Japan (Expected)
@@ -25,12 +25,12 @@
 
 2005-- | BSc. Computer Science at Delft University of Technology, The Netherlands
   2010 | ----------------------------------------------------------------------------
-       | THESIS:   "Sococa: a real-time socialization and localization platform" [2]
+       | THESIS:   "Sococa: a real-time socializing and localization platform" [2]
        | NOTABLES: Thesis performed as part of a five-month internship at the 
        |           Cybermedia Center of Osaka University, Japan.
 
-
-  EXPERIENCE
+	   
+  EXPERIENCE  
 ##############
                                       Employment
 =====================================================================================
@@ -42,7 +42,8 @@
        |   - The creation and maintenance of company Web resources;
        |   - App Store analysis and app marketability research;
        |   - English-to-Japanese localization assistance;
-       |   - Meetings and negotiations with overseas clients.
+       |   - Meetings and negotiations with overseas clients;
+	   |   - Mentoring of interns.
 
 2008   | Software engineer for the European Union eBIT Project, at CICAT TU Delft
        | ----------------------------------------------------------------------------
@@ -74,7 +75,7 @@
        | tools to browse and search for games more efficiently.
        | 
        | KEY TECHNOLOGIES: Python/Django, REST, HTML5/CSS/Javascript, PostgreSQL,
-       |                   AngularJS, ElasticSearch, Heroku
+       |                   AngularJS, Heroku
 
 2014   | The Willy Report (willyreport.wordpress.com)
        |----------------------------------------------------------------------------
@@ -108,16 +109,9 @@
        | companies to help fund the event. Eventual sponsors included Hitachi and
        | Gurunavi, among others.
 
-2008-- | Localization of Japanese media
-  2011 |-----------------------------------------------------------------------------
-       | Headed several fan-translation projects of Japanese video games. The
-       | localizations have received critical acclaim from reputable gaming sites,
-       | e.g. HardcoreGaming101 [7] on my translation of a 1996 adventure game:
-       |     "The translation [...] is mostly spotless and is very well done. [...]
-       |      one of the finest examples of fan efforts in video gaming."
+	   
 
-
-  LANGUAGES
+  LANGUAGES  
 #############
 
 English  : Fluent                                           (TOEIC score: 990 [2012])
@@ -125,7 +119,8 @@ Japanese : Professional                                              (JLPT N1 [2
 Dutch    : Native
 
 
-  COMPUTER SKILLS (ESTIMATED YEARS OF EXPERIENCE)
+
+  COMPUTER SKILLS (ESTIMATED YEARS OF EXPERIENCE)  
 ###################################################
 
 Imperative : Java (10+), Python (2), C (1)
@@ -137,7 +132,8 @@ OS         : Windows (10+), UNIX (7), OSX (2), Android (1)
 Platforms  : Amazon AWS (1), Heroku (1)
 
 
-  SELECTED PUBLICATIONS
+
+  SELECTED PUBLICATIONS  
 #########################
 
 - Slabbekoorn, K., Noro, T., Tokuda, T. Twitter User Recommendation Based on User
@@ -161,4 +157,3 @@ Platforms  : Amazon AWS (1), Heroku (1)
 [5] http://techcrunch.com/2014/05/26/bitcoin-rallies-as-allegations-of-trading-
     irregularities-swirl/
 [6] http://www.cnbc.com/id/102442027
-[7] http://hardcoregaming101.net/yuno/yuno2.htm#translation
