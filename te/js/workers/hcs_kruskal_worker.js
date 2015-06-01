@@ -11,67 +11,8 @@ importScripts('../vendor/lodash.min.js');
  * @returns forest The clusters.
  */
 function kruskal(nodes, edges) {
-    var nodeCount = nodes.length,
-	    clusterCount = nodeCount,
-	    i = edges.length,
-	    clusterIndex = 0,
-	    nodeMap = {},
-	    clusterMap = {};
-	
-	while(i--) {
-		if(clusterCount <= 2) break;
-		
-		var edge          = edges[i],
-	        sourceNode    = edge[0],
-            targetNode    = edge[1],
-            sourceCluster = nodeMap[sourceNode],
-            targetCluster = nodeMap[targetNode];
-			
-		if(sourceCluster === undefined && targetCluster === undefined) {
-			nodeMap[sourceNode] = clusterIndex;
-			nodeMap[targetNode] = clusterIndex;
-			
-			clusterMap[clusterIndex] = [sourceNode, targetNode];
-			clusterIndex++;
-			clusterCount--;
-			nodeCount -= 2;
-			
-		} else if(sourceCluster === undefined) {
-			nodeMap[sourceNode] = targetCluster;
-			clusterMap[targetCluster].push(sourceNode);
-			clusterCount--;
-			nodeCount--;
-			
-		} else if(targetCluster === undefined) {
-			nodeMap[targetNode] = sourceCluster;
-			clusterMap[sourceCluster].push(targetNode);
-			clusterCount--;
-			nodeCount--;
-			
-		} else {
-			if(sourceCluster != targetCluster) {
-				var sourceNodes = clusterMap[sourceCluster],
-				    targetNodes = clusterMap[targetCluster];
-				
-				if(sourceNodes.length > targetNodes.length) {
-					clusterMap[sourceCluster] = _.union(sourceNodes, targetNodes);
-					_.each(targetNodes, function(node) { nodeMap[node] = sourceCluster; });
-					delete clusterMap[targetCluster];
-				} else {
-					clusterMap[targetCluster] = _.union(sourceNodes, targetNodes);
-					_.each(sourceNodes, function(node) { nodeMap[node] = targetCluster; });
-					delete clusterMap[sourceCluster];
-				}
-				
-				clusterCount--;
-			}
-		}
-	}
-	
-	return { clusters: _.values(clusterMap) };
-	
 	// Nicer but much slower version.
-	/*var forest = _.map(nodes, function(node) { return [node]; });
+	var forest = _.map(nodes, function(node) { return [node]; });
 	    var i = edges.length;
 	    
 	    while(i--) {
@@ -86,7 +27,7 @@ function kruskal(nodes, edges) {
 	        }
 	    }
 	    
-	    return forest;*/
+	    return forest;
 }
 
 /**
