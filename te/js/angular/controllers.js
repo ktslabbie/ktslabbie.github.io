@@ -1,8 +1,8 @@
 var twitterWebController = angular.module('twitterWeb.controller', [])
 
-.controller('TwitterController', ['$scope', '$timeout', 'SimpleUser', 'User', 'FollowersList', 'KeywordUserList', 'SimilarityService',
+.controller('TwitterController', ['$scope', '$timeout', 'SimpleUser', 'User', 'Document', 'FollowersList', 'KeywordUserList', 'SimilarityService',
                                   'CFIUFService', 'CFIUFGroupService', 'HCSService', 'EvaluationService', 'Graph',
-                                  function($scope, $timeout, SimpleUser, User, FollowersList, KeywordUserList, SimilarityService, 
+                                  function($scope, $timeout, SimpleUser, User, Document, FollowersList, KeywordUserList, SimilarityService,
                                 		   CFIUFService, CFIUFGroupService, HCSService, EvaluationService, Graph) {
 	
 	$scope.status = { loadingInitialData: false, noUserFound: false, loadingUsers: false, updatingCFIUF: false, updatingSimilarityGraph: false, 
@@ -13,25 +13,41 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.visibleUsers = [];
 	var fullGroups = [];
 	$scope.groups = [];
+	$scope.unassignedClusters = [];
 	$scope.screenName = "iOS_blog";
 	$scope.keyword = "machine learning";
 	$scope.pageSize = 0;
 	$scope.refreshCnt = 0;
 	$scope.tweetsPerUser = 150;
-	$scope.userCount = 250;
+	$scope.userCount = 400;
 	$scope.minimumEnglishRate = 0.7;
+	$scope.evaluationMode = false;
+	$scope.strictClustering = false;
 	
 	// Named Entity Recognition settings.
 	$scope.nerConfidence = 0.00011;
-	$scope.nerSupport = 2;
-	$scope.generalityBias = 0.5;
-	$scope.concatenation = 20;
+	//$scope.nerConfidence = 0.000005;
+	$scope.nerSupport = 1;
+	$scope.generalityBias = 0;
+	$scope.concatenation = 10;
 	
 	// Minimum similarity threshold.
+	//$scope.minimumSimilarity = 0.07;
 	$scope.minimumSimilarity = 0.07;
 	
 	// Minimum CF-IUF threshold.
-	$scope.minimumCFIUF = 0.002;
+	//$scope.minimumCFIUF = 0.003;
+	$scope.minimumCFIUF = 0.003;
+	
+	// Alpha for the HCS clustering algorithm.
+	$scope.alpha = 4;
+	
+	// Settings for k-means clustering
+	$scope.kmeansK = 11;
+	$scope.kmeansIterations = 1;
+	
+	$scope.allScores = [];
+	$scope.runningAvg = 0.0;
 	
 	// Twitter user restrictions.
 	$scope.maxSeedUserFollowers = 9990000;
@@ -52,7 +68,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5",
 	                 "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5" ];
 	
-	var graph = new Graph(640, 540, "#graph", $scope.colors);
+	var graph = new Graph(960, 600, "#graph", $scope.colors);
 	
 	$scope.isLoading = function() {
 		return $scope.status.loadingUsers || $scope.status.updatingCFIUF || $scope.status.updatingSimilarityGraph || $scope.status.clusteringNetwork;
@@ -66,17 +82,20 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 							clusteringNetwork: false, clusteringFinished: false, finalUpdate: false, awaitingFinalClustering: false, zoomed: false, connectionError: false };
 		
 		CFIUFService.clear();
-		while($scope.users.length > 0) $scope.users.pop();
-		while($scope.validUsers.length > 0) $scope.validUsers.pop();
-		while($scope.visibleUsers.length > 0) $scope.visibleUsers.pop();
+		//while($scope.users.length > 0) $scope.users.pop();
+		//while($scope.validUsers.length > 0) $scope.validUsers.pop();
+		//while($scope.visibleUsers.length > 0) $scope.visibleUsers.pop();
 		while($scope.groups.length > 0) $scope.groups.pop();
 		fullGroups = [];
 		$scope.legend = [];
 		fullLegend = [];
 		
 		$scope.refreshCnt = 0;
-		graph.clearGraph();
-		graph.start(false);
+		
+		if(!$scope.evaluationMode) {
+			graph.clearGraph();
+			graph.start(false);
+		}
 		
 		$scope.processIndex = 0;
 		$scope.completedCFIUFCount = 0;
@@ -91,7 +110,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		// Let the view know we're zoomed in; add a button to restore the graph to its original form.
 		$scope.status.zoomed = true;
 		$scope.generalityBias = 0.5;
-		
+
 		// Update the collection of actually visible users.
 		$scope.visibleUsers = $scope.groups[data.group-1].users;
 		
@@ -121,7 +140,6 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		if(!$scope.status.clusteringFinished) return;
 		$scope.visibleUsers = $scope.validUsers;
 		$scope.status.zoomed = false;
-		
 		
 		if(fullGroups.length === 0) {
 			graph.clearGraph();
@@ -159,6 +177,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 					// The new CF-IUF matrix has been calculated and returned. Update the users and CF-IUF maps with the new ontologies.
 					
 					_.each(data.ontologies, function(newOntology, i) {
+						delete $scope.validUsers[i]["group"];
 						$scope.validUsers[i].userOntology.cfiufMap = newOntology.cfiufMap;
 						$scope.validUsers[i].userOntology.topTypes = newOntology.topTypes;
 						cfiufMaps.push(newOntology.cfiufMap);
@@ -224,11 +243,20 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 					// The new CF-IUF matrix has been calculated and returned. Update the users and CF-IUF maps with the new ontologies.
 					
 					$scope.completedCFIUFCount = data.ontologies.length;
+
 					
 					_.each(data.ontologies, function(newOntology, i) {
 						$scope.validUsers[i].userOntology.cfiufMap = newOntology.cfiufMap;
 						$scope.validUsers[i].userOntology.topTypes = newOntology.topTypes;
 						cfiufMaps.push(newOntology.cfiufMap);
+
+						/*if(i == 1) {
+							var longtail = "";
+							for(key in newOntology.cfiufMap) {
+								longtail += key + "," + newOntology.cfiufMap[key] + "\n";
+							}
+							console.log(longtail);
+						}*/
 					});
 					
 					if(finalizing) $scope.status.updatingSimilarityGraph = false;
@@ -293,6 +321,13 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			} else {
 				$scope.status.updatingSimilarityGraph = false;
 			}
+
+			if(finalizing) {
+			    if(!_.isEmpty(EvaluationService.getRelevanceScores())) {
+                    //EvaluationService.dcg($scope.visibleUsers, similarityLinks);
+                    //$scope.$broadcast('evaluate');
+                }
+			}
 			
 			//var endTime = new Date().getTime();
 			//console.log("Similarity graph execution time: " + (endTime - startTime));
@@ -327,13 +362,13 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 	$scope.clusterNetwork = function(userCount, similarityLinks, finalizing) {
 		
 		// If we're already updating, return (this shouldn't happen).
-		if($scope.status.clusteringNetwork) return;
+		if($scope.status.clusteringNetwork || userCount < 2) return;
 		$scope.status.clusteringNetwork = true;
 		
 		// Get the nodes and links from the current graph.
-		if(!$scope.status.zoomed) {
+		if(!$scope.status.zoomed && !$scope.evaluationMode) {
 			graph.initializeGraph(userCount, similarityLinks, $scope.visibleUsers);
-			//graph.start();
+			graph.start();
 		}
 		
 		$scope.groups = [];
@@ -342,17 +377,24 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		// Function to catch updates from the HCS cluster algorithm and push them to the cluster graph.
 		var removeOnHCSUpdate = $scope.$on('hcsUpdate', function(event, cluster) {
 			
-			if(!cluster.edges) {
+			if(!$scope.strictClustering && cluster.drop && !$scope.evaluationMode) {
 				_.each(cluster.nodes, function(nodeIndex) { graph.setGroup(nodeIndex, 0); });
+				return;
+			}
+			
+			if($scope.strictClustering && cluster.drop) {
+				$scope.unassignedClusters.push(cluster);
 				return;
 			}
 			
 			// Initialize the new group to assign this cluster to.
 			var group = { users: [], userOntology: { ontology: {} } };
 			var sortedNodes =_.sortBy(cluster.nodes);
+			
 			_.each(sortedNodes, function(nodeIndex) {
 				// Get the user this node represents, and add him to the group.
 				var user = $scope.visibleUsers[nodeIndex];
+				user["group"] = $scope.groups.length+1;
 				group.users.push(user);
 				
 				// Merge YAGO types of this user into the YAGO types of the group.
@@ -361,14 +403,16 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 							group.userOntology.ontology[type]+user.userOntology.ontology[type] : user.userOntology.ontology[type];
 				});
 				
-				// Release the nodes from the rest of the graph (and temporarily from each other).
-				if(!$scope.status.zoomed) graph.removeNodeLinks(nodeIndex);
+				// Release the node links from the rest of the graph (and temporarily from each other).
+				if(!$scope.status.zoomed && !$scope.evaluationMode) graph.removeNodeLinks(nodeIndex);
 			});
 			
 			// Update the groups.
 			$scope.groups.push(group);
-			graph.updateGraph(sortedNodes, cluster.edges, $scope.groups.length, $scope.visibleUsers);
-			graph.start(false);
+			if(!$scope.evaluationMode) {
+				graph.updateGraph(sortedNodes, cluster.edges, $scope.groups.length, $scope.visibleUsers);
+				graph.start(false);
+			}
 			
 			clusters.push(cluster);
 		});
@@ -376,10 +420,51 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		var e = {};
 		e.nodeCount = userCount;
 		e.links = similarityLinks;
+		e.alpha = $scope.alpha;
 		e.zoomed = $scope.status.zoomed;
+		
+		// KMEANS
+		e.ontologies = _.map($scope.visibleUsers, function(user) { return user.userOntology.cfiufMap; });
+		e.k = $scope.kmeansK;
+		e.i = $scope.kmeansIterations;
+		
+		//console.log(JSON.stringify($scope.visibleUsers));
 		
 		HCSService.doWork(e).then(function(data) {
 			removeOnHCSUpdate();
+			
+			while($scope.unassignedClusters.length > 0) {
+				var cluster = $scope.unassignedClusters.pop();
+				var groupNo = null;
+				var edge = null;
+				var i = cluster.edges.length;
+				while(i--) {
+					edge = cluster.edges[i];
+					groupNo = $scope.visibleUsers[edge[0]].group || $scope.visibleUsers[edge[1]].group;
+					
+					if(groupNo != null) {
+						var group = $scope.groups[groupNo-1];
+						_.each(cluster.nodes, function(node) {
+							var user = $scope.visibleUsers[node];
+							group.users.push(user);
+							
+							// Merge YAGO types of this user into the YAGO types of the group.
+							_.each(Object.keys(user.userOntology.ontology), function(type) {
+								group.userOntology.ontology[type] = _.isNumber(group.userOntology.ontology[type]) ? 
+										group.userOntology.ontology[type]+user.userOntology.ontology[type] : user.userOntology.ontology[type];
+							});
+						});
+						
+						break;
+					}
+				}
+				
+				if(!$scope.evaluationMode && groupNo != null) {
+					graph.updateGraph(cluster.nodes, [edge], groupNo, $scope.visibleUsers);
+					graph.start(false);
+				}
+			}
+			
 			
 			// We've finished calculating the cluster graph. Render the final version by removing any leftover nodes.
 			//graph.removeLinksByGroup(0);
@@ -388,9 +473,10 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				//console.log("Final update? Removing 0 nodes!");
 				//graph.removeNodesByGroup(0);
 			//}
-			
-			if($scope.status.zoomed) graph.start(true);
-			else graph.start(false);
+			if(!$scope.evaluationMode) {
+				if($scope.status.zoomed) graph.start(true);
+				else graph.start(false);
+			}
 			
 			// Build the event for CF-IUF.
 			var ev = {};
@@ -434,12 +520,18 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 						$scope.status.clusteringFinished = true;
 						$scope.status.clusteringNetwork = false;
 						
-						if(similarityLinks.length < 20000) {
+						if(!$scope.evaluationMode && similarityLinks.length < 20000) {
 							$timeout(function() {
 								graph.cloneGraph();
 								fullGroups = _.cloneDeep($scope.groups);
 								fullLegend = _.clone($scope.legend);
 							}, 1000);
+						}
+						
+						if(!_.isEmpty(EvaluationService.getRelevanceScores())) {
+							//EvaluationService.clusterEvaluation($scope.groups, $scope.visibleUsers.length, "main");
+							//EvaluationService.clusterEvaluation($scope.groups, $scope.visibleUsers.length, "sub");
+						    $scope.$broadcast('evaluate');
 						}
 						
 					} else if($scope.status.zoomed) {
@@ -455,7 +547,7 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 				//console.log(labelString);
 				
 				// Evaluate the accuracy of the clustering result (if ground truth present).
-				//if(!_.isEmpty(EvaluationService.getRelevanceScores())) EvaluationService.mcc($scope.groups, $scope.visibleUsers.length);
+				
 			});
 		});
 	}
@@ -594,12 +686,15 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		
 		// Start by updating the first user (updateUser is an async function).
 		updateUser($scope.users[i]);
+
 		$scope.processIndex += (i+1);
 		limit--;
 		
 		// Then, fill up the max active processes by fetching users up until that point.
 		while(limit--) {
+
 			updateUser($scope.users[$scope.processIndex]);
+
 			$scope.processIndex++;
 			$scope.activeProcesses++;
 		}
@@ -631,6 +726,44 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 			}
 		});
 	};
+
+	/**
+     * Document mode function.
+     *
+     * Updates the document collection with a new document.
+     */
+    $scope.updateDocument = function(user, text) {
+        // Make known to the view that we're loading "tweets/traits".
+        user.loading = true;
+
+        // Get a full user: get tweets/traits from Twitter/DBepdia if needed.
+        Document.post({ n: user.screenName, c: $scope.nerConfidence, s: $scope.nerSupport,
+             }, { t: text },
+            function(docData) {
+                // Set the basic updated user info. We can't replace the entire user object because reasons.
+                //user.userID = docData.userID;
+                //user.properties = docData.properties;
+                //user.tweetCount = docData.tweetCount;
+                user.loading = false;
+
+                // Set the new English rate calculated from the user's tweets on the server.
+                user.englishRate = 1.0;
+
+                // Check user validity.
+
+                // User is valid and has enough English tweets. Set tweets/traits found.
+                user.tweets = docData.tweets;
+                user.userOntology = docData.userOntology;
+
+                $scope.validUsers.push(user);
+                $scope.visibleUsers.push(user);
+
+                // Broadcast that we have updated a user (whether valid or not).
+                //$scope.$broadcast('userUpdated');
+        }, function(error) {
+            //$scope.status.connectionError = error.statusText;
+        });
+    }
 	
 	/**
 	 * Get a list of users from a seed user's followers (and their followers (and their followers (and etc.))).
@@ -697,6 +830,92 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 		}
 		return true;
 	}
+/*
+	*//**
+     * Start the hyperparameter optimization suite.
+     * Apply k-fold cross validation to find optimal params.
+     *//*
+	$scope.optimization = function(cfiufThres, minSim, alpha, sampleCount) {
+	    $scope.init();
+	    //if(sampleCount == 0) $scope.allScores[""+cfiufThres+":"+minSim+":"+alpha] = [];
+	    
+        var gt = EvaluationService.generateEvaluationSample();
+        $scope.users = _.map(Object.keys(gt.USERS), function(name) { return { screenName: name } });
+
+        $scope.minimumCFIUF = cfiufThres;
+        $scope.minimumSimilarity = minSim;
+        $scope.alpha = alpha;
+        $scope.updateUsers(0);
+
+        var removeOnEvaluated = $scope.$on('evaluate', function () {
+        	//console.log(""+cfiufThres+":"+minSim+":"+alpha+":"+sampleCount);
+        	var score = EvaluationService.clusterEvaluation($scope.groups, $scope.visibleUsers.length, "main", gt);
+			$scope.runningAvg += score;
+
+        	if(sampleCount < 9) {
+        		$scope.optimization(cfiufThres, minSim, alpha, sampleCount+1);
+        	} else {
+        		//localStorage.allScores = $scope.allScores;
+
+				$scope.allScores.push(""+parseFloat(cfiufThres).toFixed(3)+":"+parseFloat(minSim).toFixed(2)+":"+alpha+","+(parseFloat($scope.runningAvg/10).toFixed(4)));
+				$scope.runningAvg = 0;
+        		var scoreStr = "";
+
+        		_.each($scope.allScores, function(score) {
+        			scoreStr += score + "\n";
+        		});
+
+        		console.log(scoreStr);
+
+        		if(alpha <= 6) {
+        			if(minSim <= 0.101) {
+        				if(cfiufThres <= 0.009) {
+                        	$scope.optimization(cfiufThres+0.001, minSim, alpha, 0);
+                        } else {
+                        	$scope.optimization(0.0, minSim+0.01, alpha, 0);
+                        }
+        			}  else {
+        				$scope.optimization(0.0, 0.01, alpha+1, 0);
+        			}
+        		} else {
+        			
+        		}
+        	}
+            
+            removeOnEvaluated();
+        });
+	}
+	
+	*//**
+     * Start the hyperparameter optimization suite.
+     * Apply k-fold cross validation to find optimal params.
+     *//*
+	$scope.kmeansSuite = function(k) {
+	    $scope.init();
+	    $scope.kmeansK = k;
+	    //if(sampleCount == 0) $scope.allScores[""+cfiufThres+":"+minSim+":"+alpha] = [];
+	    
+        //var rel = EvaluationService.getRelevanceScores();
+        //$scope.users = _.map(Object.keys(rel), function(name) { return { screenName: name } });
+
+        //$scope.updateUsers(0);
+        $scope.$broadcast('userUpdated');
+
+        var removeOnEvaluated = $scope.$on('evaluate', function () {
+        	//console.log(""+cfiufThres+":"+minSim+":"+alpha+":"+sampleCount);
+        	//var scores = EvaluationService.clusterEvaluation($scope.groups, $scope.visibleUsers.length, "main");
+        	//console.log("Precision,Recall,F-score,Accuracy,NMI,MCC,NumberOfTopics\n"+parseFloat(scores.precision).toFixed(4)+"\t"+parseFloat(scores.recall).toFixed(4)+"\t"+
+        	//		parseFloat(scores.fscore).toFixed(4)+"\t"+parseFloat(scores.accuracy).toFixed(4)+"\t"+parseFloat(scores.nmi).toFixed(4)+"\t"+parseFloat(scores.mcc).toFixed(4)+"\t"+($scope.groups.length));
+        	
+			//$scope.runningAvg += score;
+
+        	if(k < 30) {
+        		$scope.kmeansSuite(k+1);
+        	}
+            
+            removeOnEvaluated();
+        });
+	}*/
 	
 	/**
 	 * Function to update page size (used for infinite scrolling).

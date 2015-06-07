@@ -133,6 +133,8 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 		 */
 		this.initializeGraph = function(nodeCnt, pLinks, users) {
 			
+			that.clearNodes();
+			
 			for(var i = nodes.length; i < nodeCnt; i++) {
 				that.addNode({ name: users[i].screenName, group: 0 });
 			}
