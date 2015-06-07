@@ -23,15 +23,15 @@ var twitterWebController = angular.module('twitterWeb.controller', [])
 
 	// Named Entity Recognition settings.
 	$scope.nerConfidence = 0.00011;
-	$scope.nerSupport = 2;
-	$scope.generalityBias = 0.5;
-	$scope.concatenation = 20;
+	$scope.nerSupport = 1;
+	$scope.generalityBias = 0.0;
+	$scope.concatenation = 10;
 
 	// Minimum similarity threshold.
 	$scope.minimumSimilarity = 0.07;
 
 	// Minimum CF-IUF threshold.
-	$scope.minimumCFIUF = 0.002;
+	$scope.minimumCFIUF = 0.003;
 
 	// Twitter user restrictions.
 	$scope.maxSeedUserFollowers = 9990000;
