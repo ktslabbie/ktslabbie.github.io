@@ -54,7 +54,7 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 			fullNodes = _.cloneDeep(nodes);
 			fullLinks = _.cloneDeep(links);
 		}
-		
+
 		/**
 		 * Restore the graph to its former glory.
 		 */
@@ -132,8 +132,6 @@ graphService.factory('Graph', ['$rootScope', function($rootScope) {
 		 * Replace the entire graph of nodes and links.
 		 */
 		this.initializeGraph = function(nodeCnt, pLinks, users) {
-			
-			that.clearNodes();
 			
 			for(var i = nodes.length; i < nodeCnt; i++) {
 				that.addNode({ name: users[i].screenName, group: 0 });
