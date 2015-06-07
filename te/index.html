@@ -53,7 +53,7 @@
         </div>
 
         <div class="col-md-1 col-list-upload">
-            <input type="file" id="gtfile" ng-model="gtFile" gt-input>
+            <input type="file" id="gtfile" ng-model="gtFile" multiple="" gt-input>
             <button id="gtupload" class="btn btn-default btn-list-upload" type="button" gt-button>Upload user list</button>
         </div>
         <div class="col-md-1 col-demo-set text-left">
@@ -63,7 +63,7 @@
 
         <div class="col-md-1">
             <h4 class="header-bias">Topic scope:</h4>
-            <input type="range" id="genbias" min=0 max=1 step=0.05 ng-model="generalityBias" ng-mouseup="updateBias()">
+            <input type="range" id="genbias" min=-1 max=1 step=0.05 ng-model="generalityBias" ng-mouseup="updateBias()">
         </div>
 
         <div class="col-md-1 col-bias-value">
