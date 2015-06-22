@@ -78,7 +78,7 @@ function hcs(nodes, edges, zoomed) {
 		//console.log("# of edges: " + clusterEdges.length + ", # of nodes: " + clusterSize + ", min. degree: " + minDegree);
 
 		// Check for highly-connectedness. If so, we're done with this cluster, else call this function again with the subgraph.
-		if( (zoomed && minDegree >= clusterSize/3) || (!zoomed && minDegree > clusterSize/3) )
+		if( (zoomed && minDegree >= clusterSize/2) || (!zoomed && minDegree > clusterSize/2) )
 			self.postMessage( { finished: false, nodes: cluster, edges: clusterEdges } );
 		else
 			hcs(cluster, clusterEdges);
