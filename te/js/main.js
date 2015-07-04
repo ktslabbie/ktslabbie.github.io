@@ -1,6 +1,6 @@
 var SETTINGS = {
-	addrOne: "211.132",
-	addrTwo: "63.192",
+	addrOne: "ktslabbie",
+	addrTwo: "asuscomm.com",
 	prt: "8090",
 	path: "/api/",
 }
